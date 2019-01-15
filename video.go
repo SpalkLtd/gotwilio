@@ -87,7 +87,7 @@ type VideoResponse struct {
 	URL                         string        `json:"url"`
 }
 
-type createRoomOptions struct {
+type CreateRoomOptions struct {
 	EnableTurn                  bool          `json:"EnableTurn"`
 	MaxParticipants             int64         `json:"MaxParticipants"`
 	MediaRegion                 MediaRegion   `json:"MediaRegion"`
@@ -101,7 +101,7 @@ type createRoomOptions struct {
 
 // DefaultVideoRoomOptions are the default options
 // for creating a room.
-var DefaultVideoRoomOptions = &createRoomOptions{
+var DefaultVideoRoomOptions = &CreateRoomOptions{
 	EnableTurn:                  true,
 	MaxParticipants:             10,
 	MediaRegion:                 USEastCoast,
@@ -126,7 +126,7 @@ type ListVideoRoomOptions struct {
 // for participants to connect to.
 // See https://www.twilio.com/docs/video/api/rooms-resource
 // for more information.
-func (twilio *Twilio) CreateVideoRoom(options *createRoomOptions) (videoResponse *VideoResponse, exception *Exception, err error) {
+func (twilio *Twilio) CreateVideoRoom(options *CreateRoomOptions) (videoResponse *VideoResponse, exception *Exception, err error) {
 	twilioUrl := twilio.VideoUrl + "/v1/Rooms"
 	formValues := createRoomOptionsToFormValues(options)
 
@@ -271,7 +271,7 @@ func (twilio *Twilio) EndVideoRoom(nameOrSid string) (videoResponse *VideoRespon
 	return videoResponse, exception, err
 }
 
-func createRoomOptionsToFormValues(options *createRoomOptions) url.Values {
+func createRoomOptionsToFormValues(options *CreateRoomOptions) url.Values {
 	formValues := url.Values{}
 	formValues.Set("EnableTurn", fmt.Sprintf("%t", options.EnableTurn))
 	formValues.Set("MaxParticipants", fmt.Sprintf("%d", options.MaxParticipants))
