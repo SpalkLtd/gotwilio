@@ -3,6 +3,7 @@ package gotwilio
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/SpalkLtd/dbr"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -56,15 +57,12 @@ const (
 // ListVideoResponse is returned when listing rooms
 type ListVideoReponse struct {
 	Rooms []*VideoResponse `json:"rooms"`
-	Meta  struct {
-		Page            int64  `json:"page"`
-		PageSize        int64  `json:"page_size"`
-		FirstPageUrl    string `json:"first_page_url"`
-		PreviousPageUrl string `json:"previous_page_url"`
-		NextPageUrl     string `json:"next_page_url"`
-		Url             string `json:"url"`
-		Key             string `json:"key"`
-	} `json:"meta"`
+	Meta  `json:"meta"`
+}
+
+type ListVideoRoomParticipantsReponse struct {
+	Rooms []*VideoResponse `json:"rooms"`
+	Meta  `json:"meta"`
 }
 
 // VideoResponse is returned for a single room
@@ -85,6 +83,20 @@ type VideoResponse struct {
 	Type                        VideoRoomType `json:"type"`
 	UniqueName                  string        `json:"unique_name"`
 	URL                         string        `json:"url"`
+}
+
+type VideoRoomParticipant struct {
+	Status      string         `json:"status"`
+	DateUpdated time.Time      `json:"date_updated"`
+	StartTime   time.Time      `json:"start_time"`
+	AccountSid  string         `json:"account_sid"`
+	Duration    dbr.NullString `json:"duration"`
+	Url         string         `json:"url"`
+	EndTime     dbr.NullTime   `json:"end_time"`
+	Sid         string         `json:"sid"`
+	RoomSid     string         `json:"room_sid"`
+	DateCreated time.Time      `json:"date_created"`
+	Identity    string         `json:"identity"`
 }
 
 type CreateRoomOptions struct {
@@ -267,6 +279,37 @@ func (twilio *Twilio) EndVideoRoom(nameOrSid string) (videoResponse *VideoRespon
 	}
 
 	videoResponse = new(VideoResponse)
+	err = json.Unmarshal(responseBody, videoResponse)
+	return videoResponse, exception, err
+}
+
+// ListVideoRooms returns a list of all currently active participants.
+// See https://www.twilio.com/docs/video/api/rooms-resource
+// for more information.
+func (twilio *Twilio) ListVideoRoomParticpants(roomIdOrUniqueName string) (videoResponse *ListVideoRoomParticipantsReponse, exception *Exception, err error) {
+
+	twilioUrl := twilio.VideoUrl + "/v1/Rooms/" + roomIdOrUniqueName + "/Participants"
+	res, err := twilio.get(twilioUrl)
+	if err != nil {
+		return videoResponse, exception, err
+	}
+	defer res.Body.Close()
+
+	responseBody, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return videoResponse, exception, err
+	}
+
+	if res.StatusCode != http.StatusOK {
+		exception = new(Exception)
+		err = json.Unmarshal(responseBody, exception)
+
+		// We aren't checking the error because we don't actually care.
+		// It's going to be passed to the client either way.
+		return videoResponse, exception, err
+	}
+
+	videoResponse = new(ListVideoRoomParticipantsReponse)
 	err = json.Unmarshal(responseBody, videoResponse)
 	return videoResponse, exception, err
 }
