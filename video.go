@@ -283,10 +283,10 @@ func (twilio *Twilio) EndVideoRoom(nameOrSid string) (videoResponse *VideoRespon
 	return videoResponse, exception, err
 }
 
-// ListVideoRooms returns a list of all currently active participants.
+// ListVideoRoomParticipants returns a list of all currently active participants.
 // See https://www.twilio.com/docs/video/api/rooms-resource
 // for more information.
-func (twilio *Twilio) ListVideoRoomParticpants(roomIdOrUniqueName string) (videoResponse *ListVideoRoomParticipantsReponse, exception *Exception, err error) {
+func (twilio *Twilio) ListVideoRoomParticipants(roomIdOrUniqueName string) (videoResponse *ListVideoRoomParticipantsReponse, exception *Exception, err error) {
 
 	twilioUrl := twilio.VideoUrl + "/v1/Rooms/" + roomIdOrUniqueName + "/Participants"
 	res, err := twilio.get(twilioUrl)
