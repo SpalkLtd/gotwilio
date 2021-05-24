@@ -60,8 +60,8 @@ type ListVideoReponse struct {
 	Meta  `json:"meta"`
 }
 
-type ListVideoRoomParticipantsReponse struct {
-	Rooms []*VideoResponse `json:"rooms"`
+type ListVideoRoomParticipantsResponse struct {
+	Participants []*VideoRoomParticipant `json:"participants"`
 	Meta  `json:"meta"`
 }
 
@@ -286,7 +286,7 @@ func (twilio *Twilio) EndVideoRoom(nameOrSid string) (videoResponse *VideoRespon
 // ListVideoRoomParticipants returns a list of all currently active participants.
 // See https://www.twilio.com/docs/video/api/rooms-resource
 // for more information.
-func (twilio *Twilio) ListVideoRoomParticipants(roomIdOrUniqueName string) (videoResponse *ListVideoRoomParticipantsReponse, exception *Exception, err error) {
+func (twilio *Twilio) ListVideoRoomParticipants(roomIdOrUniqueName string) (videoResponse *ListVideoRoomParticipantsResponse, exception *Exception, err error) {
 
 	twilioUrl := twilio.VideoUrl + "/v1/Rooms/" + roomIdOrUniqueName + "/Participants"
 	res, err := twilio.get(twilioUrl)
@@ -309,7 +309,7 @@ func (twilio *Twilio) ListVideoRoomParticipants(roomIdOrUniqueName string) (vide
 		return videoResponse, exception, err
 	}
 
-	videoResponse = new(ListVideoRoomParticipantsReponse)
+	videoResponse = new(ListVideoRoomParticipantsResponse)
 	err = json.Unmarshal(responseBody, videoResponse)
 	return videoResponse, exception, err
 }
