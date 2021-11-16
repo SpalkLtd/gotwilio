@@ -67,7 +67,7 @@ func (nts *NtsResponse) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (twilio *Twilio) GetNtsToken(ttl int) (ntsResponse *NtsResponse, exception *Exception, err error) {
+func (twilio *Twilio) GetNtsTokenWithTtl(ttl int) (ntsResponse *NtsResponse, exception *Exception, err error) {
 	basePath := "https://api.twilio.com/2010-04-01"
 	twilioUrl := fmt.Sprintf("%s/Accounts/%s/Tokens.json?Ttl=%d", basePath, twilio.AccountSid, ttl)
 
@@ -99,4 +99,8 @@ func (twilio *Twilio) GetNtsToken(ttl int) (ntsResponse *NtsResponse, exception 
 	}
 
 	return ntsResponse, exception, err
+}
+
+func (twilio *Twilio) GetNtsToken() (ntsResponse *NtsResponse, exception *Exception, err error) {
+	return twilio.GetNtsTokenWithTtl(86400)
 }
