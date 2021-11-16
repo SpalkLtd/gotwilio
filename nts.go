@@ -14,6 +14,7 @@ import (
 type IceServer struct {
 	Credential string `json:"credential"`
 	Url        string `json:"url"`
+	Urls       string `json:"urls"`
 	Username   string `json:"username"`
 }
 
@@ -66,8 +67,9 @@ func (nts *NtsResponse) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (twilio *Twilio) GetNtsToken() (ntsResponse *NtsResponse, exception *Exception, err error) {
-	twilioUrl := fmt.Sprintf("https://api.twilio.com/2010-04-01/Accounts/%s/Tokens.json", twilio.AccountSid)
+func (twilio *Twilio) GetNtsTokenWithTtl(ttl int) (ntsResponse *NtsResponse, exception *Exception, err error) {
+	basePath := "https://api.twilio.com/2010-04-01"
+	twilioUrl := fmt.Sprintf("%s/Accounts/%s/Tokens.json?Ttl=%d", basePath, twilio.AccountSid, ttl)
 
 	res, err := twilio.post(nil, twilioUrl)
 	if err != nil {
@@ -97,4 +99,8 @@ func (twilio *Twilio) GetNtsToken() (ntsResponse *NtsResponse, exception *Except
 	}
 
 	return ntsResponse, exception, err
+}
+
+func (twilio *Twilio) GetNtsToken() (ntsResponse *NtsResponse, exception *Exception, err error) {
+	return twilio.GetNtsTokenWithTtl(86400)
 }
