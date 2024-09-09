@@ -3,11 +3,12 @@ package gotwilio
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/SpalkLtd/dbr"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/SpalkLtd/dbr"
 )
 
 // MediaRegion is the locations of Twilio's
@@ -15,15 +16,16 @@ import (
 type MediaRegion string
 
 const (
-	Australia   MediaRegion = "au1"
-	Brazil      MediaRegion = "br1"
-	Germany     MediaRegion = "de1"
-	Ireland     MediaRegion = "ie1"
-	India       MediaRegion = "in1"
-	Japan       MediaRegion = "jp1"
-	Singapore   MediaRegion = "sg1"
-	USEastCoast MediaRegion = "us1"
-	USWestCoast MediaRegion = "us2"
+	Australia        MediaRegion = "au1"
+	Brazil           MediaRegion = "br1"
+	Germany          MediaRegion = "de1"
+	Ireland          MediaRegion = "ie1"
+	India            MediaRegion = "in1"
+	Japan            MediaRegion = "jp1"
+	Singapore        MediaRegion = "sg1"
+	USEastCoast      MediaRegion = "us1"
+	USWestCoast      MediaRegion = "us2"
+	GlobalLowLatency MediaRegion = "gll"
 )
 
 // VideoStatus is the status of a video room
@@ -62,7 +64,7 @@ type ListVideoReponse struct {
 
 type ListVideoRoomParticipantsResponse struct {
 	Participants []*VideoRoomParticipant `json:"participants"`
-	Meta  `json:"meta"`
+	Meta         `json:"meta"`
 }
 
 // VideoResponse is returned for a single room
@@ -116,7 +118,7 @@ type CreateRoomOptions struct {
 var DefaultVideoRoomOptions = &CreateRoomOptions{
 	EnableTurn:                  true,
 	MaxParticipants:             10,
-	MediaRegion:                 USEastCoast,
+	MediaRegion:                 GlobalLowLatency,
 	RecordParticipantsOnConnect: false,
 	StatusCallback:              "",
 	StatusCallbackMethod:        http.MethodPost,
